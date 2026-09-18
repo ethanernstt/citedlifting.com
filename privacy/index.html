@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Privacy policy — Cited</title>
+<meta name="description" content="What the Cited app collects, where it goes, and what it never touches.">
+<meta name="theme-color" content="#0B0D10">
+<link rel="icon" href="/favicon.png"><link rel="apple-touch-icon" href="/icon.png">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<header><div class="wrap">
+  <a class="brand" href="/"><img src="/icon.png" alt="">Cited</a>
+  <nav><a href="/privacy/">Privacy</a><a href="/support/">Support</a></nav>
+</div></header>
+<main class="wrap prose">
+  <p class="eyebrow">PRIVACY POLICY</p>
+  <h1 style="font-size:40px">What Cited collects, and what it never touches.</h1>
+  <p class="meta">Last updated: 18 September 2026</p>
+  <p>Cited is a hypertrophy training app. It generates programs from cited research, records your workouts, and lets you read the studies behind every number it gives you.</p>
+  <p>This policy explains what the app collects, where it goes, and what it never touches. It is short because the app collects little.</p>
+  <hr>
+  <h2>The short version</h2>
+  <ul><li><strong>Your training data lives on your phone.</strong> Workouts, sets, weights, reps and effort ratings are stored locally and work with no network at all.</li><li><strong>Your bodyweight never leaves your device.</strong> It is not synced, not backed up by us, and not sent anywhere.</li><li><strong>If you sign in</strong>, your workouts and programs sync to our server so you do not lose them when you change phones. Signing in is optional.</li><li><strong>We send counts, never numbers.</strong> Our analytics record that you finished a workout of 24 sets. They never record what you lifted.</li><li><strong>We do not sell your data, run ads, or share anything with data brokers.</strong></li></ul>
+  <hr>
+  <h2>What the app stores on your device</h2>
+  <p>Everything you log stays on your phone in a local database, and the app is fully usable without an account or a connection:</p>
+  <ul><li>Workouts, and the sets in them — exercise, weight, repetitions, and reps in reserve</li><li>Programs you generate or build, and their history</li><li>Bodyweight entries, if you record them</li><li>Your settings: units, training experience, and what you told the app during onboarding</li></ul>
+  <p>Deleting the app deletes all of it.</p>
+  <h2>What syncs, and only if you sign in</h2>
+  <p>Signing in is optional. The app works completely without an account; you would just lose your history if you lost your phone.</p>
+  <p>If you create an account, we store on our servers (Supabase, hosted in the United States):</p>
+  <ul><li>Your account identifier and email address, or the private relay address Apple gives us if you use Sign in with Apple</li><li>The first and last name you enter when creating the account, or that Apple shares if you allow it — used to greet you in the app and in the emails below, nothing else</li><li>Your programs, and the workouts and sets logged against them</li></ul>
+  <p><strong>Your bodyweight entries are not among them.</strong> They stay on the device.</p>
+  <p>Access is restricted by row-level security, meaning the database itself enforces that your rows are readable only by your account.</p>
+  <h2>Emails we send</h2>
+  <p>If you have an account we send transactional email only: confirming your address when you sign up, resetting a password, confirming a change of address. These go through Resend, which receives your email address and name in order to deliver them. There is no newsletter and no marketing email.</p>
+  <h2>Analytics</h2>
+  <p>We use PostHog to understand how the app is used — where people get stuck, and whether the parts we built are the parts anyone opens.</p>
+  <p><strong>We send counts, never values.</strong> <code>workout_completed { setsLogged: 24 }</code> is the shape of what we collect. The weight on the bar, your repetitions, your effort ratings and your bodyweight are deliberately excluded, and the app enforces that in code: property names matching training or personal data are stripped before anything is sent, and the check fails loudly in development.</p>
+  <p>Events are tied to a random identifier generated on your device. If you sign in, that identifier is linked to your account so a person is not counted twice.</p>
+  <p><strong>You can turn analytics off.</strong> Profile → Privacy → Off stops every event, including the app-open and app-close events, and the choice is remembered on your device. Nothing else in the app changes.</p>
+  <p><strong>Search text is kept only when a search finds nothing.</strong> A search that returns no results tells us which topic to write about next. A successful one is a record of something you wondered about, and is not ours to keep.</p>
+  <h2>When the app talks to someone else</h2>
+  <ul><li><strong>PubMed (US National Library of Medicine).</strong> Searching the literature sends your search text to the NCBI E-utilities API so it can return results. Their privacy policy governs what they do with it.</li><li><strong>OpenAI.</strong> When you are signed in, searching our own evidence base sends your search text to our server, which asks OpenAI to turn it into a numerical representation used to find matching claims. OpenAI receives the text of the search and nothing about you; it is not used to train their models. Our server keeps a hashed form of the search and its numerical representation so repeat searches cost nothing, not the text itself. Signed out, search is keyword-only and never leaves your phone.</li><li><strong>Apple.</strong> Purchases and subscriptions are handled by Apple. We never see your payment details.</li><li><strong>RevenueCat.</strong> Validates your subscription receipt with Apple on our behalf and tells the app whether the subscription is active. It receives a purchase identifier, not a payment method.</li></ul>
+  <h2>What we never collect</h2>
+  <ul><li>Payment card numbers or bank details — Apple handles payment and we never see it</li><li>Contacts, photos, microphone, camera, or precise location</li><li>Health data from Apple Health — the app does not connect to it</li><li>Anything for advertising or sale to third parties</li></ul>
+  <h2>Notifications</h2>
+  <p>The rest timer schedules a <strong>local</strong> notification so it can tell you when a rest period is over while the app is in the background. It is generated on your device and no push token or notification content is sent to us or anyone else.</p>
+  <h2>Retention and deletion</h2>
+  <p>Local data lives until you delete it in the app or delete the app itself.</p>
+  <p>If you have an account you can delete it yourself: Profile → Account → Delete account. That removes the account and everything backed up to it immediately and permanently. Data stored on your phone stays on your phone until you delete it in the app or delete the app. You can also contact us at the address below and we will do it for you. You do not need to give a reason.</p>
+  <h2>Children</h2>
+  <p>Cited is not directed at children under 13, and we do not knowingly collect data from them. Resistance training programmes for children should come from a coach, not an app.</p>
+  <h2>Changes</h2>
+  <p>If this policy changes in a way that affects what we collect, the app will say so rather than quietly updating a page nobody reads. The date at the top always reflects the current version.</p>
+  <h2>Contact</h2>
+  <p>Questions, deletion requests, or anything else about your data: <strong><a href="mailto:support@citedlifting.com">support@citedlifting.com</a></strong></p>
+</main>
+<footer><div class="wrap">
+  <span>© 2026 Cited</span>
+  <span><a href="/privacy/">Privacy policy</a> · <a href="/support/">Support</a> · <a href="mailto:support@citedlifting.com">support@citedlifting.com</a></span>
+</div></footer>
+</body>
+</html>
