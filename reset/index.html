@@ -30,11 +30,11 @@ input:focus{outline:2px solid var(--accent);outline-offset:1px}
   <section id="form-section">
     <p class="eyebrow">PASSWORD RESET</p>
     <h1 style="font-size:40px">Choose a new password.</h1>
-    <p>For your Cited account. At least 6 characters; longer is better.</p>
+    <p>Minimum 6 characters.</p>
     <form id="form" novalidate>
       <label for="pw">New password</label>
       <input id="pw" type="password" autocomplete="new-password" minlength="6" required>
-      <label for="pw2">Type it again</label>
+      <label for="pw2">Confirm password</label>
       <input id="pw2" type="password" autocomplete="new-password" minlength="6" required>
       <p class="error" id="error" hidden></p>
       <button class="btn" id="submit" type="submit">Set new password</button>
