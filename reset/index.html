@@ -50,6 +50,7 @@ input:focus{outline:2px solid var(--accent);outline-offset:1px}
   <section id="missing" hidden>
     <p class="eyebrow">LINK NOT VALID</p>
     <h1 style="font-size:40px">This page needs the link from your email.</h1>
+    <p class="hint" id="missing-reason" hidden></p>
     <p>Open the “Reset your Cited password” email and tap its button. If you do not have one, open Cited, go to Sign in and tap <strong>Forgot password?</strong> to get a fresh link. Links work once and expire after an hour.</p>
     <p>Stuck? <a href="mailto:support@citedlifting.com">support@citedlifting.com</a></p>
   </section>
@@ -68,14 +69,43 @@ input:focus{outline:2px solid var(--accent);outline-offset:1px}
   var SUPABASE_URL = 'https://blcuabgdoxbqvpidroou.supabase.co';
   var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJsY3VhYmdkb3hicXZwaWRyb291Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk3NjAyMDIsImV4cCI6MjEwNTMzNjIwMn0.Zb5HFNPV80IBt2NTFbbJJw6GX-u7jqXx_6zFOYjnEXs';
   var params = new URLSearchParams(location.search);
+  var hash = new URLSearchParams(location.hash.replace(/^#/, ''));
+  var get = function (k) { return params.get(k) || hash.get(k); };
   var tokenHash = params.get('token_hash');
-  var type = params.get('type') || 'recovery';
+  var accessToken = hash.get('access_token');
+  var refreshToken = hash.get('refresh_token');
+  var code = params.get('code');
+  var type = get('type') || 'recovery';
+  var linkError = get('error') || get('error_code');
+  var linkErrorText = get('error_description');
   try { history.replaceState(null, '', location.pathname); } catch (e) {}
 
   var show = function (id) {
     ['form-section', 'done', 'missing'].forEach(function (s) { document.getElementById(s).hidden = s !== id; });
   };
-  if (!tokenHash || type !== 'recovery' || !window.supabase) { show('missing'); return; }
+  var missing = function (reason) {
+    show('missing');
+    if (reason) { var el = document.getElementById('missing-reason'); el.textContent = reason; el.hidden = false; }
+  };
+
+  /*
+    Three shapes of link reach this page. The recovery email built from our
+    template carries ?token_hash=…, which the form verifies on submit. An
+    email sent from an older template redirects through Supabase first and
+    arrives with the session in the fragment (#access_token=…) or, from a
+    PKCE-flow request, with ?code=… that only the app which asked could
+    redeem. Handle the first two; explain the third.
+  */
+  var mode = null;
+  if (linkError) {
+    missing((linkErrorText || 'The link was rejected').replace(/\+/g, ' ') + '.');
+    return;
+  }
+  if (!window.supabase) { missing('The page could not load its script. Check your connection and reload.'); return; }
+  if (tokenHash && type === 'recovery') mode = 'hash';
+  else if (accessToken && refreshToken && type === 'recovery') mode = 'session';
+  else if (code) { missing('This link cannot be completed here. Open Cited, tap Forgot password? again, and use the new email.'); return; }
+  else { show('missing'); return; }
 
   var client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
@@ -94,7 +124,9 @@ input:focus{outline:2px solid var(--accent);outline-offset:1px}
     if (pw !== pw2) return fail('The two passwords do not match.');
     submit.disabled = true; submit.textContent = 'Saving…';
     try {
-      var verified = await client.auth.verifyOtp({ type: 'recovery', token_hash: tokenHash });
+      var verified = mode === 'hash'
+        ? await client.auth.verifyOtp({ type: 'recovery', token_hash: tokenHash })
+        : await client.auth.setSession({ access_token: accessToken, refresh_token: refreshToken });
       if (verified.error) {
         var m = (verified.error.message || '').toLowerCase();
         return fail(m.indexOf('expired') >= 0 || m.indexOf('invalid') >= 0
