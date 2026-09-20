@@ -63,7 +63,7 @@ const html = `<!doctype html>
 ${body.map((b) => '  ' + b).join('\n')}
 </main>
 <footer><div class="wrap">
-  <span>© 2026 Cited</span>
+  <span>© 2026 Ernst Development LLC</span>
   <span><a href="/privacy/">Privacy policy</a> · <a href="/support/">Support</a> · <a href="mailto:support@citedlifting.com">support@citedlifting.com</a></span>
 </div></footer>
 </body>
