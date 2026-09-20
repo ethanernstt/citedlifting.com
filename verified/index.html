@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Email confirmed — Cited</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0B0D10">
+<link rel="icon" href="/favicon.png"><link rel="apple-touch-icon" href="/icon.png">
+<link rel="stylesheet" href="/styles.css">
+<style>
+.status{display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:20px;background:rgba(127,207,168,.14);color:var(--accent);margin:8px 0 20px}
+.status.err{background:rgba(255,120,120,.12);color:#ff9a9a}
+.status svg{width:32px;height:32px}
+.btn{display:inline-block;background:var(--accent);color:var(--accent-text);font-weight:700;padding:14px 22px;border-radius:12px;margin:8px 12px 8px 0}
+.btn:hover{text-decoration:none;filter:brightness(1.05)}
+.btn.secondary{background:var(--surface);color:var(--text);border:1px solid var(--border)}
+.hint{color:var(--faint);font-size:14px;margin-top:14px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <a class="brand" href="/"><img src="/icon.png" alt="">Cited</a>
+  <nav><a href="/privacy/">Privacy</a><a href="/support/">Support</a></nav>
+</div></header>
+<main class="wrap prose">
+  <section id="ok">
+    <div class="status" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+    <p class="eyebrow">EMAIL CONFIRMED</p>
+    <h1 style="font-size:40px">You're all set.</h1>
+    <p>Your email address is confirmed. Open Cited and sign in with the password you chose; your workouts and programs will back up to your account from here on.</p>
+    <p><a class="btn" id="open" href="sbl://">Open Cited</a><a class="btn secondary" href="https://apps.apple.com/app/id6809612794">Get Cited on the App Store</a></p>
+    <p class="hint" id="open-hint" hidden>If nothing happened, Cited is not installed on this device. Open it on your phone from the home screen and sign in there.</p>
+  </section>
+  <section id="bad" hidden>
+    <div class="status err" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 7v6"/><circle cx="12" cy="17" r="1" fill="currentColor"/><circle cx="12" cy="12" r="9"/></svg></div>
+    <p class="eyebrow">LINK NOT VALID</p>
+    <h1 style="font-size:40px">This link has expired or was already used.</h1>
+    <p id="bad-reason" class="hint"></p>
+    <p>Confirmation links work once and expire after a while. Try signing in to Cited first: if your address was already confirmed, it will simply work. If it says your email is not confirmed, write to <a href="mailto:support@citedlifting.com">support@citedlifting.com</a> from that address and we will confirm it for you.</p>
+    <p><a class="btn" href="sbl://">Open Cited</a></p>
+  </section>
+</main>
+<footer><div class="wrap">
+  <span>© 2026 Cited</span>
+  <span><a href="/privacy/">Privacy policy</a> · <a href="/support/">Support</a> · <a href="mailto:support@citedlifting.com">support@citedlifting.com</a></span>
+</div></footer>
+<script>
+(function () {
+  // Supabase sends the outcome in the URL: `?code=` or `#access_token=` on
+  // success, `error`/`error_code`/`error_description` on failure. Read it,
+  // then drop it from the address bar at once so nothing session-shaped
+  // lingers in history or gets copied by accident. Nothing here is stored
+  // or sent anywhere.
+  var hash = new URLSearchParams(location.hash.replace(/^#/, ''));
+  var query = new URLSearchParams(location.search);
+  var get = function (k) { return hash.get(k) || query.get(k); };
+  var failed = !!(get('error') || get('error_code'));
+  var reason = get('error_description');
+  try { history.replaceState(null, '', location.pathname); } catch (e) {}
+  if (failed) {
+    document.getElementById('ok').hidden = true;
+    document.getElementById('bad').hidden = false;
+    if (reason) document.getElementById('bad-reason').textContent = reason.replace(/\+/g, ' ');
+  }
+  var open = document.getElementById('open');
+  if (open) open.addEventListener('click', function () {
+    setTimeout(function () { document.getElementById('open-hint').hidden = false; }, 1500);
+  });
+})();
+</script>
+</body>
+</html>
