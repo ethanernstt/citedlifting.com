@@ -11,6 +11,12 @@
 <meta name="theme-color" content="#0B0D10">
 <link rel="icon" href="/favicon.png"><link rel="apple-touch-icon" href="/icon.png">
 <link rel="stylesheet" href="/styles.css">
+<script>
+// Older app builds send the email-confirmation redirect to the site root.
+// Anything that looks like an auth outcome in the URL is forwarded to the
+// page built for it, which also drops it from the address bar.
+(function(){var q=location.search+location.hash;if(/(^|[#&?])(access_token|refresh_token|code|error|error_code|type)=/.test(q))location.replace('/verified/'+location.search+location.hash);})();
+</script>
 </head>
 <body>
 <header><div class="wrap">
