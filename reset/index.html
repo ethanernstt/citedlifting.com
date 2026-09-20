@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Choose a new password — Cited</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0B0D10">
+<link rel="icon" href="/favicon.png"><link rel="apple-touch-icon" href="/icon.png">
+<link rel="stylesheet" href="/styles.css">
+<style>
+form{max-width:420px}
+label{display:block;color:var(--dim);font-size:14px;margin:16px 0 6px}
+input{width:100%;box-sizing:border-box;background:var(--raised);color:var(--text);border:1px solid var(--border);border-radius:12px;padding:14px;font:inherit;font-size:17px}
+input:focus{outline:2px solid var(--accent);outline-offset:1px}
+.btn{display:inline-block;background:var(--accent);color:var(--accent-text);font-weight:700;padding:14px 22px;border-radius:12px;border:0;font:inherit;font-size:17px;cursor:pointer;margin-top:20px}
+.btn[disabled]{opacity:.6;cursor:default}
+.error{color:#ff9a9a;font-size:15px;margin-top:14px}
+.hint{color:var(--faint);font-size:14px;margin-top:10px}
+.status{display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:20px;background:rgba(127,207,168,.14);color:var(--accent);margin:8px 0 20px}
+.status svg{width:32px;height:32px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <a class="brand" href="/"><img src="/icon.png" alt="">Cited</a>
+  <nav><a href="/privacy/">Privacy</a><a href="/support/">Support</a></nav>
+</div></header>
+<main class="wrap prose">
+  <section id="form-section">
+    <p class="eyebrow">PASSWORD RESET</p>
+    <h1 style="font-size:40px">Choose a new password.</h1>
+    <p>For your Cited account. At least 6 characters; longer is better.</p>
+    <form id="form" novalidate>
+      <label for="pw">New password</label>
+      <input id="pw" type="password" autocomplete="new-password" minlength="6" required>
+      <label for="pw2">Type it again</label>
+      <input id="pw2" type="password" autocomplete="new-password" minlength="6" required>
+      <p class="error" id="error" hidden></p>
+      <button class="btn" id="submit" type="submit">Set new password</button>
+    </form>
+  </section>
+  <section id="done" hidden>
+    <div class="status" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+    <p class="eyebrow">PASSWORD UPDATED</p>
+    <h1 style="font-size:40px">Done.</h1>
+    <p>Open Cited and sign in with your new password.</p>
+    <p><a class="btn" href="sbl://">Open Cited</a></p>
+  </section>
+  <section id="missing" hidden>
+    <p class="eyebrow">LINK NOT VALID</p>
+    <h1 style="font-size:40px">This page needs the link from your email.</h1>
+    <p>Open the “Reset your Cited password” email and tap its button. If you do not have one, open Cited, go to Sign in and tap <strong>Forgot password?</strong> to get a fresh link. Links work once and expire after an hour.</p>
+    <p>Stuck? <a href="mailto:support@citedlifting.com">support@citedlifting.com</a></p>
+  </section>
+</main>
+<footer><div class="wrap">
+  <span>© 2026 Cited</span>
+  <span><a href="/privacy/">Privacy policy</a> · <a href="/support/">Support</a> · <a href="mailto:support@citedlifting.com">support@citedlifting.com</a></span>
+</div></footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+(function () {
+  // The email link carries a one-time token hash. Nothing is verified until
+  // the form is submitted, so opening the link does not spend it; the hash is
+  // taken off the address bar straight away. The anon key is the app's public
+  // key: it can do nothing here beyond what the token itself permits.
+  var SUPABASE_URL = 'https://blcuabgdoxbqvpidroou.supabase.co';
+  var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJsY3VhYmdkb3hicXZwaWRyb291Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk3NjAyMDIsImV4cCI6MjEwNTMzNjIwMn0.Zb5HFNPV80IBt2NTFbbJJw6GX-u7jqXx_6zFOYjnEXs';
+  var params = new URLSearchParams(location.search);
+  var tokenHash = params.get('token_hash');
+  var type = params.get('type') || 'recovery';
+  try { history.replaceState(null, '', location.pathname); } catch (e) {}
+
+  var show = function (id) {
+    ['form-section', 'done', 'missing'].forEach(function (s) { document.getElementById(s).hidden = s !== id; });
+  };
+  if (!tokenHash || type !== 'recovery' || !window.supabase) { show('missing'); return; }
+
+  var client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
+  });
+  var form = document.getElementById('form');
+  var errorEl = document.getElementById('error');
+  var submit = document.getElementById('submit');
+  var fail = function (message) { errorEl.textContent = message; errorEl.hidden = false; submit.disabled = false; submit.textContent = 'Set new password'; };
+
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    errorEl.hidden = true;
+    var pw = document.getElementById('pw').value;
+    var pw2 = document.getElementById('pw2').value;
+    if (pw.length < 6) return fail('Choose a password of at least 6 characters.');
+    if (pw !== pw2) return fail('The two passwords do not match.');
+    submit.disabled = true; submit.textContent = 'Saving…';
+    try {
+      var verified = await client.auth.verifyOtp({ type: 'recovery', token_hash: tokenHash });
+      if (verified.error) {
+        var m = (verified.error.message || '').toLowerCase();
+        return fail(m.indexOf('expired') >= 0 || m.indexOf('invalid') >= 0
+          ? 'This link has expired or was already used. Open Cited, go to Sign in and tap Forgot password? for a new one.'
+          : verified.error.message);
+      }
+      var updated = await client.auth.updateUser({ password: pw });
+      if (updated.error) return fail(updated.error.message);
+      await client.auth.signOut();
+      show('done');
+    } catch (err) {
+      fail('Something went wrong reaching the server. Check your connection and try again.');
+    }
+  });
+})();
+</script>
+</body>
+</html>
